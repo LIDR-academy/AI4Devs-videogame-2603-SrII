@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris XVB</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="board-panel">
+        <h1>Tetris XVB</h1>
+        <canvas id="gameCanvas" width="300" height="600" aria-label="Tablero de Tetris"></canvas>
+        <div class="overlay" id="overlayMessage" aria-live="polite"></div>
+      </section>
+
+      <aside class="info-panel">
+        <div class="card">
+          <h2>Siguiente</h2>
+          <canvas id="nextCanvas" width="120" height="120" aria-label="Siguiente pieza"></canvas>
+        </div>
+
+        <div class="card">
+          <h2>Marcador</h2>
+          <p><span>Puntuacion:</span> <strong id="scoreValue">0</strong></p>
+          <p><span>Nivel:</span> <strong id="levelValue">1</strong></p>
+          <p><span>Lineas:</span> <strong id="linesValue">0</strong></p>
+        </div>
+
+        <div class="card">
+          <h2>Controles</h2>
+          <ul>
+            <li>Izquierda: mover izquierda</li>
+            <li>Derecha: mover derecha</li>
+            <li>Abajo: caida suave</li>
+            <li>Arriba: rotar</li>
+            <li>Espacio: caida rapida</li>
+            <li>P: pausar/reanudar</li>
+            <li>Enter: iniciar/reiniciar</li>
+          </ul>
+        </div>
+
+        <button id="startButton" type="button">Iniciar / Reiniciar</button>
+      </aside>
+    </main>
+
+    <script src="./js/game.js"></script>
+  </body>
+</html>
