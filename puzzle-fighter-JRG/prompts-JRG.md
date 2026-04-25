@@ -1,8 +1,8 @@
 # Puzzle Fighter - JRG
 ## Description
+Super Puzzle Fighter is a browser-based competitive puzzle game inspired by Super Puzzle Fighter II Turbo, built entirely with HTML5 Canvas, CSS, and vanilla JavaScript. Two players — a human (Player 1) and an AI opponent (Player 2) — face off on side-by-side 6×12 grids, where pairs of colored gems (red, blue, green, yellow) fall from the top. Players must strategically stack and match gems, using special Crash Gems to destroy all connected same-color gems in chain reactions, sending counter gems to their opponent's board. The game also features Rainbow Gems that destroy all gems of a single color, a combo/chain scoring system, and pending counter gem warnings.
 
-
-## Prompts
+## Prompts (using Claude Opus 4.6 High)
 ### First Functional Design - MVP
 As a video game design expert, I would like you to create a game similar to Super Puzzle Fighter II using HTML, CSS, and JavaScript. Once you have reviewed the game, please outline the incremental development phases along with the expected deliverables for each stage.
 
