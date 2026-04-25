@@ -34,3 +34,27 @@ Add better visual assets (sprites) for the videogame using this the resources in
 I did a manual fix removin extra content from the image. No prompt needed for this.
 
 ![Adding-Sprites](image-2.png)
+
+## Audio effects
+I've uploaded a set of sounds in ./assets/sounds
+I want you to apply the sounds this way:
+
+DROP.wav when the user click on Soft or Hard Drop
+EXPLOSION.wav when the gems explode
+PAUSE.wav when the user press P for pause
+READY.wav when the game is loaded, at the beginning
+FIGHT.wav when the user click on START GAME button
+HIT_FLOOR.wav when any gem hit the botton of the board
+ROTATE_.wav press Z or X to rotate the gems
+YOU_WIN.wav when the user win a game
+YOU_LOSE.wav when the user lose a game
+KEN_SOUNDTRACK.flac after FIGHT.wav
+
+### Fixing initial sound
+READY.wav is not being heard at the beginning
+
+## Changing the title
+Using ChatGPT, providing the previous title image I asked for another one with the same style:
+- I want another image with the same style with the text "Puzzle Fighter - JRG"
+
+![Fina-version](image-3.png)

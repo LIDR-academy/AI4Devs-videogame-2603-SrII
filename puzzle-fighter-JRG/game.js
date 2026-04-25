@@ -52,6 +52,36 @@
   function randColor() { return randInt(NUM_COLORS); }
 
   // ===========================
+  // SOUND MANAGER
+  // ===========================
+  const SFX = {
+    drop:       new Audio('assets/sounds/DROP.wav'),
+    explosion:  new Audio('assets/sounds/EXPLOSION.wav'),
+    pause:      new Audio('assets/sounds/PAUSE.wav'),
+    ready:      new Audio('assets/sounds/READY.wav'),
+    fight:      new Audio('assets/sounds/FIGHT.wav'),
+    hitFloor:   new Audio('assets/sounds/HIT_FLOOR.wav'),
+    rotate:     new Audio('assets/sounds/ROTATE_.wav'),
+    youWin:     new Audio('assets/sounds/YOU_WIN.wav'),
+    youLose:    new Audio('assets/sounds/YOU_LOSE.wav'),
+    ko:         new Audio('assets/sounds/KO.wav'),
+    soundtrack: new Audio('assets/sounds/KEN_SOUNDTRACK.flac'),
+  };
+
+  SFX.soundtrack.loop = true;
+  SFX.soundtrack.volume = 0.4;
+
+  function playSound(sfx) {
+    sfx.currentTime = 0;
+    sfx.play().catch(() => {});
+  }
+
+  function stopSound(sfx) {
+    sfx.pause();
+    sfx.currentTime = 0;
+  }
+
+  // ===========================
   // BOARD
   // ===========================
   class Board {
@@ -676,6 +706,7 @@
     lockPiece() {
       if (!this.pair) return;
       this.pair.lock();
+      if (!this.isAI) playSound(SFX.hitFloor);
       this.dropCount++;
       this.pair = null;
       this.state = 'processing';
@@ -723,6 +754,7 @@
             }
             if (destroyed > 0) {
               // Spawn explosion particles
+              playSound(SFX.explosion);
               for (const pos of allDestroyed) {
                 this.spawnExplosion(pos.x, pos.y, pos.color);
               }
@@ -1452,12 +1484,16 @@
         if (!this.roundOver) {
           this.roundOver = true;
           this.gameOverTimer = 0;
+          stopSound(SFX.soundtrack);
+          playSound(SFX.ko);
           if (this.player1.state === 'gameover' && this.player2.state !== 'gameover') {
             this.player2.wins++;
             this.p1WinStreak = 0; // Player lost, reset streak
+            playSound(SFX.youLose);
           } else if (this.player2.state === 'gameover' && this.player1.state !== 'gameover') {
             this.player1.wins++;
             this.p1WinStreak++;
+            playSound(SFX.youWin);
           }
           // Adjust AI difficulty based on player win streak
           this.player2.aiDifficulty = Math.min(this.p1WinStreak, AI_DIFFICULTY.length - 1);
@@ -1478,6 +1514,9 @@
       this.gameOverTimer = 0;
       this.player1.spawn();
       this.player2.spawn();
+      // Resume soundtrack for new round
+      SFX.soundtrack.currentTime = 0;
+      SFX.soundtrack.play().catch(() => {});
     }
 
     getDifficultyLabel() {
@@ -1514,6 +1553,12 @@
       if (e.code === 'KeyP') {
         if (this.game.running && !this.game.roundOver) {
           this.game.togglePause();
+          playSound(SFX.pause);
+          if (this.game.paused) {
+            SFX.soundtrack.pause();
+          } else {
+            SFX.soundtrack.play().catch(() => {});
+          }
         }
         return;
       }
@@ -1530,16 +1575,20 @@
           break;
         case 'ArrowDown':
           player.softDropping = true;
+          playSound(SFX.drop);
           break;
         case 'ArrowUp':
+          playSound(SFX.drop);
           player.pair.hardDrop();
           player.lockPiece();
           break;
         case 'KeyZ':
           player.pair.rotate(-1);
+          playSound(SFX.rotate);
           break;
         case 'KeyX':
           player.pair.rotate(1);
+          playSound(SFX.rotate);
           break;
       }
 
@@ -1566,7 +1615,18 @@
   const overlayTitle = document.getElementById('overlay-title');
   const overlayMessage = document.getElementById('overlay-message');
 
+  // Play READY sound on first mouse enter (browsers need user gesture for audio)
+  document.addEventListener('mouseenter', () => {
+    playSound(SFX.ready);
+  }, { once: true });
+
   startBtn.addEventListener('click', () => {
+    playSound(SFX.fight);
+    // Start the soundtrack after the FIGHT voice clip (~1s)
+    setTimeout(() => {
+      SFX.soundtrack.currentTime = 0;
+      SFX.soundtrack.play().catch(() => {});
+    }, 1000);
     game.start();
   });
 
