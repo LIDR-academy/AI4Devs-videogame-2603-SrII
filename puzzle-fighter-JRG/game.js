@@ -228,7 +228,7 @@
     // Activate crash gem at (cx, cy). Returns number of gems destroyed.
     activateCrashGem(cx, cy) {
       const crashCell = this.grid[cy][cx];
-      if (!crashCell || crashCell.type !== CRASH) return 0;
+      if (!crashCell || crashCell.type !== CRASH) return { count: 0, positions: [] };
 
       const color = crashCell.color;
       let destroyed = 0;
@@ -245,7 +245,7 @@
         }
       }
 
-      if (!hasTarget) return 0;
+      if (!hasTarget) return { count: 0, positions: [] };
 
       // Flood-fill to find all connected same-color gems
       const toDestroy = new Set();
@@ -312,13 +312,16 @@
         }
       }
 
+      const destroyedPositions = [];
       for (const key of toDestroy) {
         const [dx, dy] = key.split(',').map(Number);
+        destroyedPositions.push({ x: dx, y: dy, color });
         this.grid[dy][dx] = null;
         destroyed++;
       }
       for (const key of counterToDestroy) {
         const [dx, dy] = key.split(',').map(Number);
+        destroyedPositions.push({ x: dx, y: dy, color: -1 });
         this.grid[dy][dx] = null;
         destroyed++;
       }
@@ -333,7 +336,7 @@
         return true;
       });
 
-      return destroyed;
+      return { count: destroyed, positions: destroyedPositions };
     }
 
     // Activate rainbow gem at (rx, ry)
@@ -565,6 +568,7 @@
       this.softDropping = false;
       this.opponent = null;
       this.processStep = 0;
+      this.explosions = [];
 
       // AI state
       this.aiTarget = null;
@@ -584,6 +588,7 @@
       this.totalDestroyed = 0;
       this.pendingCounter = 0;
       this.processStep = 0;
+      this.explosions = [];
       this.aiTarget = null;
       this.aiDecided = false;
     }
@@ -646,6 +651,8 @@
       if (this.isAI && this.state === 'falling') {
         this.updateAI(dt);
       }
+
+      this.updateExplosions(dt);
     }
 
     updateFalling(dt) {
@@ -708,10 +715,17 @@
           const crashGems = this.board.findActiveCrashGems();
           if (crashGems.length > 0) {
             let destroyed = 0;
+            const allDestroyed = [];
             for (const cg of crashGems) {
-              destroyed += this.board.activateCrashGem(cg.x, cg.y);
+              const result = this.board.activateCrashGem(cg.x, cg.y);
+              destroyed += result.count;
+              allDestroyed.push(...result.positions);
             }
             if (destroyed > 0) {
+              // Spawn explosion particles
+              for (const pos of allDestroyed) {
+                this.spawnExplosion(pos.x, pos.y, pos.color);
+              }
               this.chainCount++;
               const chainBonus = Math.pow(2, this.chainCount - 1);
               const points = destroyed * 10 * chainBonus;
@@ -783,6 +797,43 @@
             this.spawn();
           }
           break;
+      }
+    }
+
+    // ---- Explosions ----
+    spawnExplosion(gx, gy, colorIdx) {
+      const cx = gx * CELL + CELL / 2;
+      const cy = gy * CELL + CELL / 2;
+      const col = colorIdx >= 0 && colorIdx < COLORS.length ? COLORS[colorIdx] : COUNTER_COLOR;
+      const count = 6 + randInt(4);
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+        const speed = 40 + Math.random() * 80;
+        const lifespan = 0.4 + Math.random() * 0.3;
+        this.explosions.push({
+          x: cx, y: cy,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 30,
+          life: lifespan,
+          maxLife: lifespan,
+          size: 3 + Math.random() * 4,
+          color: col.fill || col.light,
+          bright: col.light || '#fff',
+        });
+      }
+    }
+
+    updateExplosions(dt) {
+      const sec = dt / 1000;
+      for (let i = this.explosions.length - 1; i >= 0; i--) {
+        const p = this.explosions[i];
+        p.x += p.vx * sec;
+        p.y += p.vy * sec;
+        p.vy += 120 * sec; // gravity
+        p.life -= sec;
+        if (p.life <= 0) {
+          this.explosions.splice(i, 1);
+        }
       }
     }
 
@@ -956,6 +1007,42 @@
       this.ctx2 = this.boardCanvas2.getContext('2d');
       this.nctx1 = this.nextCanvas1.getContext('2d');
       this.nctx2 = this.nextCanvas2.getContext('2d');
+
+      // Sprite images
+      this.sprites = {};
+      this.spritesLoaded = false;
+      this._loadSprites();
+    }
+
+    _loadSprites() {
+      const colorNames = ['red', 'blue', 'green', 'yellow'];
+      const types = ['normal', 'crash', 'power'];
+      const toLoad = [];
+
+      for (const color of colorNames) {
+        for (const type of types) {
+          const key = `${type}-${color}`;
+          toLoad.push(key);
+        }
+      }
+      toLoad.push('counter', 'rainbow');
+
+      let loaded = 0;
+      const total = toLoad.length;
+
+      for (const key of toLoad) {
+        const img = new Image();
+        img.onload = () => {
+          loaded++;
+          if (loaded >= total) this.spritesLoaded = true;
+        };
+        img.onerror = () => {
+          loaded++;
+          if (loaded >= total) this.spritesLoaded = true;
+        };
+        img.src = `assets/gem-${key}.png`;
+        this.sprites[key] = img;
+      }
     }
 
     clear() {
@@ -1008,94 +1095,120 @@
       const py = y * CELL;
       const size = CELL - 2;
       const offset = 1;
+      const colorName = cell.color !== undefined ? COLORS[cell.color].name : null;
 
       if (cell.type === NORMAL) {
-        const col = COLORS[cell.color];
-        // Check if part of power gem
         if (cell.powerGemId) {
-          // Solid fill for power gems
-          ctx.fillStyle = col.fill;
-          ctx.fillRect(px + offset, py + offset, size, size);
-          // Inner highlight
-          ctx.fillStyle = col.light;
-          ctx.fillRect(px + offset + 2, py + offset + 2, size - 10, size - 10);
-          ctx.fillStyle = col.fill;
-          ctx.fillRect(px + offset + 4, py + offset + 4, size - 14, size - 14);
+          const sprite = this.sprites[`power-${colorName}`];
+          if (this.spritesLoaded && sprite && sprite.complete) {
+            ctx.drawImage(sprite, px, py, CELL, CELL);
+          } else {
+            const col = COLORS[cell.color];
+            ctx.fillStyle = col.fill;
+            ctx.fillRect(px + offset, py + offset, size, size);
+            ctx.fillStyle = col.light;
+            ctx.fillRect(px + offset + 2, py + offset + 2, size - 10, size - 10);
+            ctx.fillStyle = col.fill;
+            ctx.fillRect(px + offset + 4, py + offset + 4, size - 14, size - 14);
+          }
         } else {
-          // Normal gem with 3D effect
-          ctx.fillStyle = col.dark;
-          ctx.fillRect(px + offset, py + offset, size, size);
-          ctx.fillStyle = col.fill;
-          ctx.fillRect(px + offset, py + offset, size - 3, size - 3);
-          ctx.fillStyle = col.light;
-          ctx.fillRect(px + offset + 3, py + offset + 3, size - 9, size - 9);
-          ctx.fillStyle = col.fill;
-          ctx.fillRect(px + offset + 5, py + offset + 5, size - 13, size - 13);
+          const sprite = this.sprites[`normal-${colorName}`];
+          if (this.spritesLoaded && sprite && sprite.complete) {
+            ctx.drawImage(sprite, px, py, CELL, CELL);
+          } else {
+            const col = COLORS[cell.color];
+            ctx.fillStyle = col.dark;
+            ctx.fillRect(px + offset, py + offset, size, size);
+            ctx.fillStyle = col.fill;
+            ctx.fillRect(px + offset, py + offset, size - 3, size - 3);
+            ctx.fillStyle = col.light;
+            ctx.fillRect(px + offset + 3, py + offset + 3, size - 9, size - 9);
+            ctx.fillStyle = col.fill;
+            ctx.fillRect(px + offset + 5, py + offset + 5, size - 13, size - 13);
+          }
         }
       } else if (cell.type === CRASH) {
-        const col = COLORS[cell.color];
-        // Diamond shape
-        const cx = px + CELL / 2;
-        const cy = py + CELL / 2;
-        const r = size / 2 - 2;
-
-        ctx.fillStyle = col.dark;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - r);
-        ctx.lineTo(cx + r, cy);
-        ctx.lineTo(cx, cy + r);
-        ctx.lineTo(cx - r, cy);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = col.fill;
-        const r2 = r - 3;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy - r2);
-        ctx.lineTo(cx + r2, cy);
-        ctx.lineTo(cx, cy + r2);
-        ctx.lineTo(cx - r2, cy);
-        ctx.closePath();
-        ctx.fill();
-
-        // Star/sparkle in center
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 14px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('✦', cx, cy);
+        const sprite = this.sprites[`crash-${colorName}`];
+        if (this.spritesLoaded && sprite && sprite.complete) {
+          ctx.drawImage(sprite, px, py, CELL, CELL);
+          // Sparkle overlay
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 14px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('✦', px + CELL / 2, py + CELL / 2);
+        } else {
+          const col = COLORS[cell.color];
+          const cx = px + CELL / 2;
+          const cy = py + CELL / 2;
+          const r = size / 2 - 2;
+          ctx.fillStyle = col.dark;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy - r);
+          ctx.lineTo(cx + r, cy);
+          ctx.lineTo(cx, cy + r);
+          ctx.lineTo(cx - r, cy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = col.fill;
+          const r2 = r - 3;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy - r2);
+          ctx.lineTo(cx + r2, cy);
+          ctx.lineTo(cx, cy + r2);
+          ctx.lineTo(cx - r2, cy);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 14px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('✦', cx, cy);
+        }
       } else if (cell.type === COUNTER) {
-        // Gray gem with timer number
-        ctx.fillStyle = COUNTER_COLOR.dark;
-        ctx.fillRect(px + offset, py + offset, size, size);
-        ctx.fillStyle = COUNTER_COLOR.fill;
-        ctx.fillRect(px + offset + 2, py + offset + 2, size - 4, size - 4);
-        ctx.fillStyle = COUNTER_COLOR.light;
-        ctx.fillRect(px + offset + 4, py + offset + 4, size - 10, size - 10);
-        ctx.fillStyle = COUNTER_COLOR.fill;
-        ctx.fillRect(px + offset + 6, py + offset + 6, size - 14, size - 14);
-
-        // Timer number
+        const sprite = this.sprites['counter'];
+        if (this.spritesLoaded && sprite && sprite.complete) {
+          ctx.drawImage(sprite, px, py, CELL, CELL);
+        } else {
+          ctx.fillStyle = COUNTER_COLOR.dark;
+          ctx.fillRect(px + offset, py + offset, size, size);
+          ctx.fillStyle = COUNTER_COLOR.fill;
+          ctx.fillRect(px + offset + 2, py + offset + 2, size - 4, size - 4);
+          ctx.fillStyle = COUNTER_COLOR.light;
+          ctx.fillRect(px + offset + 4, py + offset + 4, size - 10, size - 10);
+          ctx.fillStyle = COUNTER_COLOR.fill;
+          ctx.fillRect(px + offset + 6, py + offset + 6, size - 14, size - 14);
+        }
+        // Timer number always drawn
         ctx.fillStyle = '#fff';
         ctx.font = 'bold 13px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(cell.timer, px + CELL / 2, py + CELL / 2);
       } else if (cell.type === RAINBOW) {
-        // Multicolor gem
-        const segW = size / RAINBOW_COLORS.length;
-        for (let i = 0; i < RAINBOW_COLORS.length; i++) {
-          ctx.fillStyle = RAINBOW_COLORS[i];
-          ctx.fillRect(px + offset + i * segW, py + offset, segW + 0.5, size);
+        const sprite = this.sprites['rainbow'];
+        if (this.spritesLoaded && sprite && sprite.complete) {
+          ctx.drawImage(sprite, px, py, CELL, CELL);
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 14px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('★', px + CELL / 2, py + CELL / 2);
+        } else {
+          const segW = size / RAINBOW_COLORS.length;
+          for (let i = 0; i < RAINBOW_COLORS.length; i++) {
+            ctx.fillStyle = RAINBOW_COLORS[i];
+            ctx.fillRect(px + offset + i * segW, py + offset, segW + 0.5, size);
+          }
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(px + offset, py + offset, size, size);
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 14px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('★', px + CELL / 2, py + CELL / 2);
         }
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(px + offset, py + offset, size, size);
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 14px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('★', px + CELL / 2, py + CELL / 2);
       }
     }
 
@@ -1192,6 +1305,25 @@
       ctx.fillText('PAUSED', canvas.width / 2, canvas.height / 2);
     }
 
+    drawExplosions(ctx, explosions) {
+      for (const p of explosions) {
+        const alpha = Math.max(0, p.life / p.maxLife);
+        const size = p.size * (0.5 + alpha * 0.5);
+        ctx.globalAlpha = alpha;
+        // Bright core
+        ctx.fillStyle = p.bright;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Colored outer
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1.0;
+    }
+
     render(game) {
       this.clear();
 
@@ -1200,12 +1332,14 @@
       if (game.player1.state === 'falling') {
         this.drawFallingPair(this.ctx1, game.player1.pair);
       }
+      this.drawExplosions(this.ctx1, game.player1.explosions);
 
       // Board 2
       this.drawBoard(this.ctx2, game.player2.board);
       if (game.player2.state === 'falling') {
         this.drawFallingPair(this.ctx2, game.player2.pair);
       }
+      this.drawExplosions(this.ctx2, game.player2.explosions);
 
       // Next pieces
       this.drawNextPiece(this.nctx1, this.nextCanvas1, game.player1.nextPair);

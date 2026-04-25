@@ -23,6 +23,18 @@ body {
   gap: 12px;
 }
 
+.title-wrapper {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.title-img {
+  max-width: 500px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 12px rgba(243, 156, 18, 0.5));
+}
+
 .title {
   font-size: 28px;
   letter-spacing: 4px;

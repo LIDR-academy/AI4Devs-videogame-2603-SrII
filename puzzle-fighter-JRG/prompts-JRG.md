@@ -8,3 +8,23 @@ As a video game design expert, I would like you to create a game similar to Supe
 Context:
     - Super Puzzle Fighter II: brief game overview https://game.capcom.com/manual/CFC/es419/ps4/page/8/1
     - PlayStation game manual: https://www.videogamemanual.com/ps1/Super%20Puzzle%20Fighter%20II%20Turbo%20(USA).pdf
+
+#### Improve the difficulty of the game
+The opponent's difficulty is too high; I need them to make decisions more slowly. It's very difficult to beat them. Find a way to increase the difficulty depending on whether the player wins more than 1, 2, or 3 games in a row. Also the number of Crash Gems that the player receives is very low, increase it to 30%
+
+![First-Design](image.png)
+## Visual Assets - Sprites
+Add better visual assets (sprites) for the videogame using this the resources in:
+    - Green gems: https://www.spriters-resource.com/arcade/superpuzfightiiturb/asset/236867/
+    - Red gems: https://www.spriters-resource.com/arcade/superpuzfightiiturb/asset/27964/
+    - Blue gems: https://www.spriters-resource.com/arcade/superpuzfightiiturb/asset/236869/
+    - Black gems: https://www.spriters-resource.com/arcade/superpuzfightiiturb/asset/236870/ 
+    - Title: https://www.spriters-resource.com/arcade/superpuzfightiiturb/asset/92326/
+    - Texts (Win, Lose, KO, Ready, Fight, VS, etc): https://www.spriters-resource.com/arcade/superpuzfightiiturb/asset/44456/ 
+
+
+#### Improving Sprites and adding explosions
+- Remove the pink borders in the sprites
+- Add explosions efects when a gem Crash Gems destroy all connected same-color.
+
+![Adding-Sprites](image-1.png)
