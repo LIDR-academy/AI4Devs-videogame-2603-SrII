@@ -15,9 +15,12 @@ export class Bullet extends Phaser.Physics.Arcade.Sprite {
   }
 
   fire(x, y, dirX, friendly = true) {
-    this.setActive(true);
-    this.setVisible(true);
-    this.body.reset(x, y);
+    // enableBody(reset=true, x, y, enableGameObject=true, showGameObject=true) is the
+    // documented inverse of disableBody(true, true). It re-enables body.enable, repositions,
+    // sets active and visible — the prior triplet of calls left body.enable=false on recycle,
+    // so reused bullets rendered but never moved. Velocity must be set AFTER this because
+    // enableBody(true, ...) zeroes it as part of the reset.
+    this.enableBody(true, x, y, true, true);
     this.body.allowGravity = false;
     this.body.setVelocity(dirX * BULLET_SPEED, 0);
     this.setScale(BULLET_SCALE);
