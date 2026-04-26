@@ -9,6 +9,7 @@ import {
   ANIM_FRAMERATE_ENEMY_ATTACK,
   ANIM_FRAMERATE_ENEMY_HURT,
   ANIM_FRAMERATE_ENEMY_DEATH,
+  TILE_SIZE,
 } from '../config.js';
 
 const SOLDIER = 'resources/Characters(100x100)/Soldier/Soldier';
@@ -33,7 +34,12 @@ export class BootScene extends Phaser.Scene {
     this.load.spritesheet('orc-hurt', `${ORC}/Orc-Hurt.png`, { frameWidth: 100, frameHeight: 100 });
     this.load.spritesheet('orc-death', `${ORC}/Orc-Death.png`, { frameWidth: 100, frameHeight: 100 });
 
-    this.load.image('grass-tileset', 'resources/grass tileset.png');
+    // 384x128 atlas — 24 cols × 8 rows of TILE_SIZE-wide cells. We render the ground from
+    // specific frames in GameScene rather than tiling the whole bitmap.
+    this.load.spritesheet('grass-tileset', 'resources/grass tileset.png', {
+      frameWidth: TILE_SIZE,
+      frameHeight: TILE_SIZE,
+    });
     this.load.image('arrow', 'resources/Arrow(Projectile)/Arrow01(32x32).png');
 
     // Audio

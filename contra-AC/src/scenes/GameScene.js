@@ -7,6 +7,9 @@ import {
   GOAL_MARKER_WIDTH,
   GOAL_MARKER_COLOR,
   ENEMY_VARIANTS,
+  TILE_SIZE,
+  GROUND_TILE_TOP,
+  GROUND_TILE_DIRT,
 } from '../config.js';
 import { Player } from '../entities/Player.js';
 import { createBulletPool } from '../entities/Bullet.js';
@@ -24,8 +27,14 @@ export class GameScene extends Phaser.Scene {
 
     this.cameras.main.setBackgroundColor('#7ec0ee');
 
+    // Ground is drawn from atlas tiles, not the whole tileset bitmap. Two TileSprite layers:
+    // a TILE_SIZE-tall grass-top strip across the level, and a dirt-fill body underneath.
+    const groundTopY = GAME_HEIGHT - GROUND_HEIGHT;
     this.add
-      .tileSprite(0, GAME_HEIGHT - GROUND_HEIGHT, levelWidth, GROUND_HEIGHT, 'grass-tileset')
+      .tileSprite(0, groundTopY, levelWidth, TILE_SIZE, 'grass-tileset', GROUND_TILE_TOP)
+      .setOrigin(0, 0);
+    this.add
+      .tileSprite(0, groundTopY + TILE_SIZE, levelWidth, GROUND_HEIGHT - TILE_SIZE, 'grass-tileset', GROUND_TILE_DIRT)
       .setOrigin(0, 0);
 
     this.groundBody = this.add

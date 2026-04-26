@@ -93,3 +93,10 @@ export const PAUSE_PROMPT_FONT_SIZE = 18;
 export const AUDIO_VOLUME = 0.6;
 export const SCREEN_SHAKE_DURATION_MS = 150;
 export const SCREEN_SHAKE_INTENSITY = 0.005;
+
+export const TILE_SIZE = 16;
+// Frame indexes into the 16x16 grass-tileset spritesheet (24 cols × 8 rows).
+// Cols 0-7 are individual atlas tiles; cols 8-23 are a level-mockup demo we don't use.
+// Row 0 is fully transparent in this PNG — the actual atlas content starts at row 1.
+export const GROUND_TILE_TOP = 25; // grass-top: green strip on dirt, col 1 row 1
+export const GROUND_TILE_DIRT = 29; // solid dirt fill, col 5 row 1
