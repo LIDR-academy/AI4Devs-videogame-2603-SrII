@@ -7,6 +7,7 @@ export class GameOverScene extends Phaser.Scene {
 
   init(data) {
     this.reason = data?.reason ?? 'killed';
+    this.score = data?.score ?? 0;
   }
 
   create() {
@@ -15,7 +16,7 @@ export class GameOverScene extends Phaser.Scene {
     const headline = this.reason === 'time_up' ? 'OUT OF TIME' : 'GAME OVER';
 
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40, headline, {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 - 60, headline, {
         fontFamily: HUD_FONT_FAMILY,
         fontSize: '56px',
         color: '#ff5555',
@@ -23,7 +24,15 @@ export class GameOverScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.add
-      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 40, 'Press any key to retry', {
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10, `Score: ${this.score}`, {
+        fontFamily: HUD_FONT_FAMILY,
+        fontSize: '24px',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5);
+
+    this.add
+      .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 60, 'Press any key to retry', {
         fontFamily: HUD_FONT_FAMILY,
         fontSize: '20px',
         color: '#cccccc',

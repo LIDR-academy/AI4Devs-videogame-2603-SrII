@@ -26,6 +26,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.play('orc-idle');
 
     this.on('animationcomplete-orc-death', () => {
+      this.scene?.events?.emit('enemy-killed', { variant: this.variantKey });
       this.destroy();
     });
   }

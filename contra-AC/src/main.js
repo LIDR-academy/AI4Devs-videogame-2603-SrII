@@ -4,6 +4,7 @@ import { TitleScene } from './scenes/TitleScene.js';
 import { GameScene } from './scenes/GameScene.js';
 import { GameOverScene } from './scenes/GameOverScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
+import { PauseScene } from './scenes/PauseScene.js';
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -21,5 +22,5 @@ new Phaser.Game({
       debug: false,
     },
   },
-  scene: [BootScene, TitleScene, GameScene, GameOverScene, VictoryScene],
+  scene: [BootScene, TitleScene, GameScene, GameOverScene, VictoryScene, PauseScene],
 });

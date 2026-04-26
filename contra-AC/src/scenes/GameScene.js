@@ -6,6 +6,7 @@ import {
   LEVEL_DURATION_SECONDS,
   GOAL_MARKER_WIDTH,
   GOAL_MARKER_COLOR,
+  ENEMY_VARIANTS,
 } from '../config.js';
 import { Player } from '../entities/Player.js';
 import { createBulletPool } from '../entities/Bullet.js';
@@ -85,7 +86,15 @@ export class GameScene extends Phaser.Scene {
     this.hud = new HUD(this);
     this.events.emit('player-hp-changed', this.player.hp);
 
-    // Countdown timer.
+    // Score
+    this.score = 0;
+    this.events.emit('score-changed', this.score);
+    this.events.on('enemy-killed', ({ variant }) => {
+      this.score += ENEMY_VARIANTS[variant].scoreValue;
+      this.events.emit('score-changed', this.score);
+    });
+
+    // Countdown timer
     this.timeLeftSec = LEVEL_DURATION_SECONDS;
     this.events.emit('timer-changed', this.timeLeftSec);
     this.timerEvent = this.time.addEvent({
@@ -93,6 +102,20 @@ export class GameScene extends Phaser.Scene {
       loop: true,
       callback: () => this.tickTimer(),
     });
+
+    // Pause input — read via JustDown in update() to avoid the keydown-listener double-fire
+    // that can happen when PauseScene resumes GameScene on the same key event.
+    this.pauseKeys = this.input.keyboard.addKeys({
+      p: Phaser.Input.Keyboard.KeyCodes.P,
+      esc: Phaser.Input.Keyboard.KeyCodes.ESC,
+    });
+  }
+
+  openPause() {
+    if (this.scene.isActive('PauseScene')) return;
+    if (this.player.dead) return;
+    this.scene.launch('PauseScene');
+    this.scene.pause();
   }
 
   tickTimer() {
@@ -100,7 +123,7 @@ export class GameScene extends Phaser.Scene {
     this.events.emit('timer-changed', this.timeLeftSec);
     if (this.timeLeftSec <= 0) {
       this.timerEvent.remove(false);
-      this.scene.start('GameOverScene', { reason: 'time_up' });
+      this.scene.start('GameOverScene', { reason: 'time_up', score: this.score });
     }
   }
 
@@ -110,10 +133,17 @@ export class GameScene extends Phaser.Scene {
     this.victoryFired = true;
     this.timerEvent.remove(false);
     playVictoryPlaceholder();
-    this.scene.start('VictoryScene', { score: 0 });
+    this.scene.start('VictoryScene', { score: this.score });
   }
 
   update() {
+    if (
+      Phaser.Input.Keyboard.JustDown(this.pauseKeys.p) ||
+      Phaser.Input.Keyboard.JustDown(this.pauseKeys.esc)
+    ) {
+      this.openPause();
+      return;
+    }
     this.player.update();
   }
 }

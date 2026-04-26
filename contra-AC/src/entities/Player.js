@@ -51,7 +51,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     });
 
     this.on('animationcomplete-soldier-death', () => {
-      this.scene.scene.start('GameOverScene', { reason: 'killed' });
+      this.scene.scene.start('GameOverScene', { reason: 'killed', score: this.scene.score ?? 0 });
     });
 
     this.play('soldier-idle');

@@ -40,6 +40,7 @@ export const ENEMY_VARIANTS = {
     speed: 80,
     behaviorId: 'walkToward',
     hitbox: DEFAULT_HITBOX,
+    scoreValue: 100,
   },
   shooter: {
     tint: 0xff7777,
@@ -49,6 +50,7 @@ export const ENEMY_VARIANTS = {
     behaviorId: 'standAndShoot',
     fireIntervalMs: 1500,
     hitbox: DEFAULT_HITBOX,
+    scoreValue: 300,
   },
   jumper: {
     tint: 0xffdd44,
@@ -59,6 +61,7 @@ export const ENEMY_VARIANTS = {
     jumpIntervalMs: 800,
     jumpVelocity: 350,
     hitbox: DEFAULT_HITBOX,
+    scoreValue: 200,
   },
 };
 
@@ -80,3 +83,9 @@ export const GOAL_MARKER_WIDTH = 24;
 export const GOAL_MARKER_COLOR = 0xffe44a;
 export const HUD_TIMER_X = 380;
 export const HUD_TIMER_FONT_SIZE = 24;
+
+export const PAUSE_OVERLAY_ALPHA = 0.6;
+export const PAUSE_OVERLAY_COLOR = 0x000000;
+export const PAUSE_TEXT_COLOR = '#ffffff';
+export const PAUSE_HEADLINE_FONT_SIZE = 48;
+export const PAUSE_PROMPT_FONT_SIZE = 18;
