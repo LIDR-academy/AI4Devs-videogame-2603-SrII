@@ -1,5 +1,6 @@
 import { GAME_WIDTH, GAME_HEIGHT, GROUND_HEIGHT, LEVEL_WIDTH_SCREENS } from '../config.js';
 import { Player } from '../entities/Player.js';
+import { createBulletPool } from '../entities/Bullet.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -17,17 +18,22 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0, 0);
 
     // Invisible static body for collision, sized to match the visual ground strip.
-    const groundBody = this.add
+    this.groundBody = this.add
       .rectangle(0, GAME_HEIGHT - GROUND_HEIGHT, levelWidth, GROUND_HEIGHT)
       .setOrigin(0, 0)
       .setVisible(false);
-    this.physics.add.existing(groundBody, true);
+    this.physics.add.existing(this.groundBody, true);
 
     this.physics.world.setBounds(0, 0, levelWidth, GAME_HEIGHT);
     this.cameras.main.setBounds(0, 0, levelWidth, GAME_HEIGHT);
 
+    this.bullets = createBulletPool(this);
+    this.physics.add.collider(this.bullets, this.groundBody, (bullet) => {
+      bullet.disableBody(true, true);
+    });
+
     this.player = new Player(this, 80, GAME_HEIGHT - GROUND_HEIGHT - 100);
-    this.physics.add.collider(this.player, groundBody);
+    this.physics.add.collider(this.player, this.groundBody);
 
     this.cameras.main.startFollow(this.player, true, 0.1, 0);
   }

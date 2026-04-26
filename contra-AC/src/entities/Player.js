@@ -1,4 +1,12 @@
-import { PLAYER_RUN_SPEED, PLAYER_JUMP_VELOCITY } from '../config.js';
+import {
+  PLAYER_RUN_SPEED,
+  PLAYER_JUMP_VELOCITY,
+  PLAYER_FIRE_COOLDOWN_MS,
+} from '../config.js';
+import { playShootPlaceholder } from '../audio.js';
+
+const FIRE_OFFSET_X = 30;
+const FIRE_OFFSET_Y = -10;
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
@@ -16,6 +24,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       a: Phaser.Input.Keyboard.KeyCodes.A,
       d: Phaser.Input.Keyboard.KeyCodes.D,
       space: Phaser.Input.Keyboard.KeyCodes.SPACE,
+      z: Phaser.Input.Keyboard.KeyCodes.Z,
+      x: Phaser.Input.Keyboard.KeyCodes.X,
+    });
+
+    this.lastFiredAt = 0;
+    this.attacking = false;
+
+    this.on('animationcomplete-soldier-attack', () => {
+      this.attacking = false;
     });
 
     this.play('soldier-idle');
@@ -28,18 +45,43 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (leftDown && !rightDown) {
       this.setVelocityX(-PLAYER_RUN_SPEED);
       this.setFlipX(true);
-      if (this.anims.currentAnim?.key !== 'soldier-walk') this.play('soldier-walk');
     } else if (rightDown && !leftDown) {
       this.setVelocityX(PLAYER_RUN_SPEED);
       this.setFlipX(false);
-      if (this.anims.currentAnim?.key !== 'soldier-walk') this.play('soldier-walk');
     } else {
       this.setVelocityX(0);
-      if (this.anims.currentAnim?.key !== 'soldier-idle') this.play('soldier-idle');
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.keys.space) && this.body.blocked.down) {
       this.setVelocityY(-PLAYER_JUMP_VELOCITY);
     }
+
+    this.tryFire();
+
+    if (!this.attacking) {
+      const want = this.body.velocity.x !== 0 ? 'soldier-walk' : 'soldier-idle';
+      if (this.anims.currentAnim?.key !== want) this.play(want);
+    }
+  }
+
+  tryFire() {
+    const time = this.scene.time.now;
+    if (time - this.lastFiredAt < PLAYER_FIRE_COOLDOWN_MS) return;
+
+    const pointer = this.scene.input.activePointer;
+    const fireRequested =
+      this.keys.z.isDown || this.keys.x.isDown || (pointer && pointer.leftButtonDown());
+    if (!fireRequested) return;
+
+    const bullet = this.scene.bullets?.get();
+    if (!bullet) return;
+
+    const dirX = this.flipX ? -1 : 1;
+    bullet.fire(this.x + dirX * FIRE_OFFSET_X, this.y + FIRE_OFFSET_Y, dirX, true);
+
+    this.lastFiredAt = time;
+    this.attacking = true;
+    this.play('soldier-attack', true);
+    playShootPlaceholder();
   }
 }

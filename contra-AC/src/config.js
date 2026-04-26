@@ -11,3 +11,11 @@ export const LEVEL_WIDTH_SCREENS = 3;
 export const GROUND_HEIGHT = 64;
 export const ANIM_FRAMERATE_IDLE = 6;
 export const ANIM_FRAMERATE_WALK = 12;
+
+export const PLAYER_FIRE_COOLDOWN_MS = 200;
+export const BULLET_SPEED = 600;
+export const BULLET_LIFETIME_MS = 1500;
+export const BULLET_POOL_MAX_SIZE = 32;
+export const BULLET_SCALE = 1;
+export const BULLET_OFFSCREEN_MARGIN = 64;
+export const ANIM_FRAMERATE_ATTACK = 16;
