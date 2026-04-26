@@ -1,7 +1,7 @@
 export const GAME_WIDTH = 960;
 export const GAME_HEIGHT = 540;
 
-export const LEVEL_DURATION_SECONDS = 90; // Reserved for Phase 6 countdown timer.
+export const LEVEL_DURATION_SECONDS = 90;
 export const PLAYER_MAX_HP = 3;
 
 export const PLAYER_RUN_SPEED = 220;
@@ -75,3 +75,8 @@ export const HUD_PIP_STROKE_COLOR = 0xffffff;
 export const HUD_SCORE_X = 200;
 export const HUD_SCORE_FONT_SIZE = 18;
 export const HUD_FONT_FAMILY = 'monospace';
+
+export const GOAL_MARKER_WIDTH = 24;
+export const GOAL_MARKER_COLOR = 0xffe44a;
+export const HUD_TIMER_X = 380;
+export const HUD_TIMER_FONT_SIZE = 24;

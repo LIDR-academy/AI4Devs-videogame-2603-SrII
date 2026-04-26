@@ -7,8 +7,14 @@ import {
   HUD_PIP_STROKE_COLOR,
   HUD_SCORE_X,
   HUD_SCORE_FONT_SIZE,
+  HUD_TIMER_X,
+  HUD_TIMER_FONT_SIZE,
   HUD_FONT_FAMILY,
 } from '../config.js';
+
+function pad2(n) {
+  return n < 10 ? `0${n}` : `${n}`;
+}
 
 export class HUD {
   constructor(scene) {
@@ -33,18 +39,31 @@ export class HUD {
       })
       .setScrollFactor(0);
 
+    this.timerText = scene.add
+      .text(HUD_TIMER_X, HUD_MARGIN - 2, '00', {
+        fontFamily: HUD_FONT_FAMILY,
+        fontSize: `${HUD_TIMER_FONT_SIZE}px`,
+        color: '#ffffff',
+      })
+      .setScrollFactor(0);
+
     scene.events.on('player-hp-changed', (hp) => this.setHp(hp));
     scene.events.on('score-changed', (score) => this.setScore(score));
+    scene.events.on('timer-changed', (sec) => this.setTimer(sec));
   }
 
   setHp(hp) {
     this.pips.forEach((pip, i) => {
       if (i < hp) pip.setFillStyle(HUD_PIP_FILL_COLOR);
-      else pip.setFillStyle(HUD_PIP_FILL_COLOR, 0); // hollow
+      else pip.setFillStyle(HUD_PIP_FILL_COLOR, 0);
     });
   }
 
   setScore(score) {
     this.scoreText.setText(`SCORE: ${score}`);
+  }
+
+  setTimer(sec) {
+    this.timerText.setText(pad2(Math.max(0, sec)));
   }
 }

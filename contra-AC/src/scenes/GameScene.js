@@ -1,8 +1,17 @@
-import { GAME_WIDTH, GAME_HEIGHT, GROUND_HEIGHT, LEVEL_WIDTH_SCREENS } from '../config.js';
+import {
+  GAME_WIDTH,
+  GAME_HEIGHT,
+  GROUND_HEIGHT,
+  LEVEL_WIDTH_SCREENS,
+  LEVEL_DURATION_SECONDS,
+  GOAL_MARKER_WIDTH,
+  GOAL_MARKER_COLOR,
+} from '../config.js';
 import { Player } from '../entities/Player.js';
 import { createBulletPool } from '../entities/Bullet.js';
 import { EnemySpawner } from '../entities/EnemySpawner.js';
 import { HUD } from '../ui/HUD.js';
+import { playVictoryPlaceholder } from '../audio.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -45,13 +54,11 @@ export class GameScene extends Phaser.Scene {
       enemy.takeDamage(1);
     });
 
-    // Player damage from enemies on overlap (collision still keeps bodies separate).
     this.physics.add.overlap(this.player, this.enemies, (player, enemy) => {
       if (!enemy.active || enemy.dead) return;
       player.takeDamage(1);
     });
 
-    // Player damage from enemy bullets.
     this.physics.add.overlap(this.player, this.bullets, (player, bullet) => {
       if (bullet.friendly) return;
       bullet.disableBody(true, true);
@@ -60,10 +67,50 @@ export class GameScene extends Phaser.Scene {
 
     this.spawner = new EnemySpawner(this, this.enemies);
 
+    // Goal marker at the right edge of the level.
+    const goalX = levelWidth - GOAL_MARKER_WIDTH;
+    this.add
+      .rectangle(goalX, 0, GOAL_MARKER_WIDTH, GAME_HEIGHT, GOAL_MARKER_COLOR)
+      .setOrigin(0, 0);
+    this.goal = this.add
+      .rectangle(goalX, 0, GOAL_MARKER_WIDTH, GAME_HEIGHT)
+      .setOrigin(0, 0)
+      .setVisible(false);
+    this.physics.add.existing(this.goal, true);
+    this.victoryFired = false;
+    this.physics.add.overlap(this.player, this.goal, () => this.onVictory());
+
     this.cameras.main.startFollow(this.player, true, 0.1, 0);
 
     this.hud = new HUD(this);
     this.events.emit('player-hp-changed', this.player.hp);
+
+    // Countdown timer.
+    this.timeLeftSec = LEVEL_DURATION_SECONDS;
+    this.events.emit('timer-changed', this.timeLeftSec);
+    this.timerEvent = this.time.addEvent({
+      delay: 1000,
+      loop: true,
+      callback: () => this.tickTimer(),
+    });
+  }
+
+  tickTimer() {
+    this.timeLeftSec = Math.max(0, this.timeLeftSec - 1);
+    this.events.emit('timer-changed', this.timeLeftSec);
+    if (this.timeLeftSec <= 0) {
+      this.timerEvent.remove(false);
+      this.scene.start('GameOverScene', { reason: 'time_up' });
+    }
+  }
+
+  onVictory() {
+    if (this.victoryFired) return;
+    if (this.player.dead) return;
+    this.victoryFired = true;
+    this.timerEvent.remove(false);
+    playVictoryPlaceholder();
+    this.scene.start('VictoryScene', { score: 0 });
   }
 
   update() {

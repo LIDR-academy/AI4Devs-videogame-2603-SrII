@@ -38,3 +38,9 @@ export function playPlayerHurtPlaceholder() {
 export function playPlayerDeathPlaceholder() {
   blip({ type: 'sawtooth', startFreq: 220, endFreq: 60, duration: 0.6, volume: 0.1 });
 }
+
+export function playVictoryPlaceholder() {
+  // Two-note rising blip.
+  blip({ type: 'triangle', startFreq: 660, endFreq: 660, duration: 0.12, volume: 0.08 });
+  setTimeout(() => blip({ type: 'triangle', startFreq: 990, endFreq: 990, duration: 0.18, volume: 0.08 }), 130);
+}
