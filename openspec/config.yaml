@@ -1,0 +1,50 @@
+schema: spec-driven
+
+context: |
+  Project: Contra-AC — a browser-based 2D side-scrolling run-and-gun game inspired by Konami's Contra.
+
+  Tech stack:
+    - HTML5 (single index.html entry point)
+    - JavaScript (ES modules, no build step required)
+    - Phaser 3 game framework (loaded via CDN or local copy)
+    - Pure CSS (no preprocessors, no frameworks)
+
+  Code location constraint:
+    - ALL game code, assets, and documentation MUST live under /contra-AC.
+    - Do not create or modify files outside /contra-AC, except for /openspec artifacts.
+
+  Assets available at /contra-AC/resources:
+    - Characters(100x100)/Soldier/...  → player sprite sheets (Idle, Walk, Attack01-03, Hurt, Death)
+    - Characters(100x100)/Orc/...      → enemy sprite sheets (Idle, Walk, Attack01-02, Hurt, Death)
+    - Arrow(Projectile)/...            → projectile sprites (32x32 and 100x100)
+    - grass tileset.png                → ground/platform tileset
+    Note: only one enemy art set (Orc) ships with resources. Multiple enemy *types* (grunt, shooter, jumper)
+    must be expressed via behavior + tinting/scaling, not new art.
+
+  Game design (MVP, single-player, single level):
+    - Side-scrolling 2D, ~3 screens wide, ~90 second timer.
+    - Player abilities: run left/right, jump, shoot.
+    - Single basic gun, infinite ammo, straight horizontal shots.
+    - 2-3 enemy types reusing the Orc sprite: walking grunt, stationary shooter, jumper.
+    - Spawn density: 3-5 enemies on screen at a time.
+    - Player has 3 HP, 1 life. Hit = lose 1 HP. 0 HP = game over.
+    - Timer hits zero = game over immediately.
+    - Win condition: reach the right edge of the stage (goal marker).
+    - Audio: SFX only (shoot, hit, death). No music.
+    - Score shown during play (no persistence).
+    - Screens: Title, Pause, Game Over, Victory.
+    - Controls: Arrow keys OR WASD to move; Space to jump; Z/X/mouse to shoot.
+
+  Conventions:
+    - Phaser 3 Scene-per-screen pattern (BootScene, TitleScene, GameScene, GameOverScene, VictoryScene).
+    - Keep modules small and single-purpose; prefer composition over inheritance.
+    - Place all gameplay constants (speeds, HP, timer, spawn rate) in a single config module so tuning is fast.
+    - Conventional commits.
+
+rules:
+  proposal:
+    - Keep proposals focused on one user-visible capability (e.g. "player can shoot", "enemies spawn and chase").
+    - Always include a "Non-goals" section to keep MVP scope tight.
+  tasks:
+    - Break tasks into chunks of max 2 hours.
+    - Every visible feature must include a manual playtest step in the task list.
