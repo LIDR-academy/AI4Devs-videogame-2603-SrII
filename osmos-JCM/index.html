@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osmos Web Clone - Physics Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Importamos Phaser 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+</head>
+<body>
+    <div id="ui-layer">
+        <div id="stats">Nivel: <span id="current-level">1</span> | Masa del Jugador: <span id="player-mass">100</span></div>
+        <button id="btn-instructions">Ver Instrucciones</button>
+        <div id="game-over" class="hidden">
+            <h1 id="go-title">¡Masa Destruida!</h1>
+            <p id="go-reason">Has sido absorbido por una masa mayor.</p>
+            <button onclick="location.reload()">Reiniciar Simulación</button>
+        </div>
+        <div id="level-complete" class="hidden">
+            <h1>¡Nivel Superado!</h1>
+            <p>Has absorbido toda la materia del sector.</p>
+            <button id="btn-next-level">Siguiente Nivel</button>
+        </div>
+        <div id="instructions-modal" class="hidden">
+            <h2>Manual de Supervivencia</h2>
+            <ul>
+                <li>Eres la masa <b>azul</b>.</li>
+                <li>Absorbe las masas <b>verdes</b> (menores) mediante choques inelásticos para crecer.</li>
+                <li>Evita las masas <b>rojas</b> (mayores) o serás absorbido.</li>
+                <li><b>1 Click:</b> Expulsa masa levemente (2 uds.) para propulsarte.</li>
+                <li><b>Doble Click:</b> Expulsión fuerte (4 uds.).</li>
+                <li><b>Física:</b> La masa eyectada sale <i>hacia</i> el puntero. Por acción y reacción, tú te mueves en dirección opuesta.</li>
+            </ul>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="btn-close-instructions">Reanudar Simulación</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
