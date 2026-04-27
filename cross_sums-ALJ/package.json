@@ -1,0 +1,17 @@
+{
+  "name": "cross_sums-alj",
+  "version": "1.0.0",
+  "description": "Cross Sums puzzle game",
+  "private": true,
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:ui": "npx playwright test --ui",
+    "start": "npx serve . -l 3333 --no-clipboard"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "serve": "^14.2.6"
+  }
+}

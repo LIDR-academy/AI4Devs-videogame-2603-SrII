@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cross Sums</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header id="topbar">
+    <h1 class="app-title">Cross Sums</h1>
+    <button id="btn-open-newgame" type="button" class="topbar-btn">New Game</button>
+    <div id="timer" aria-label="Elapsed time">00:00</div>
+  </header>
+  <main id="app">
+    <div class="grid-stage">
+      <div id="grid-container"></div>
+      <div id="win-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="win-title">
+        <div class="win-content">
+          <h2 id="win-title">Puzzle Complete!</h2>
+          <p id="win-time" class="win-time"></p>
+          <button id="btn-new-game" type="button" class="btn-primary">New Game</button>
+        </div>
+      </div>
+    </div>
+    <div id="toolbar">
+      <button id="btn-check" type="button" class="toolbar-btn">Check</button>
+      <button id="btn-reveal" type="button" class="toolbar-btn">Reveal</button>
+      <button id="btn-notes" type="button" class="toolbar-btn" aria-pressed="false">
+        <span class="pencil-icon" aria-hidden="true">&#9998;</span>
+        Notes
+      </button>
+    </div>
+    <div id="numpad-container"></div>
+  </main>
+
+  <div id="newgame-modal" hidden role="dialog" aria-modal="true" aria-labelledby="newgame-title">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2 id="newgame-title">New Game</h2>
+        <button id="btn-modal-close" type="button" class="modal-close" aria-label="Close">&times;</button>
+      </header>
+      <section class="modal-section">
+        <h3>Quick Play</h3>
+        <div id="builtin-buttons" class="quick-play-grid"></div>
+      </section>
+      <section class="modal-section">
+        <h3>Custom</h3>
+        <div class="custom-inputs">
+          <label>
+            Rows
+            <input type="number" id="custom-rows" min="4" max="15" value="6" />
+          </label>
+          <label>
+            Cols
+            <input type="number" id="custom-cols" min="4" max="15" value="6" />
+          </label>
+          <button id="btn-generate" type="button" class="btn-primary">Generate</button>
+        </div>
+        <p id="custom-error" class="custom-error" hidden></p>
+      </section>
+      <div id="loading-spinner" hidden class="loading">
+        <div class="spinner" aria-hidden="true"></div>
+        <span>Generating puzzle...</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="sr-live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Load scripts in dependency order -->
+  <script src="js/grid.js"></script>
+  <script src="js/validator.js"></script>
+  <script src="js/pencil.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/puzzles.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

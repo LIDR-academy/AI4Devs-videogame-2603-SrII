@@ -1,0 +1,922 @@
+/* Cross Sums — global styles
+ * Reset, theme tokens, page layout, and grid/cell visuals.
+ */
+
+/* Reset ------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: "Outfit", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+button {
+  font-family: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Visually-hidden helper for the screen-reader live region. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Theme tokens — light (default) + dark via prefers-color-scheme ----------- */
+
+:root {
+  --bg: #f5f5f5;
+  --text: #111111;
+
+  --blank-bg: #ffffff;
+  --blank-text: #111111;
+  --blank-border: #cfcfcf;
+
+  --clue-bg: #3a3a3a;
+  --clue-text: #f4f4f4;
+  --clue-line: #f4f4f4;
+
+  --wall-bg: #1f1f1f;
+
+  --grid-border: #2a2a2a;
+
+  --highlight-across: #fff3d6;
+  --highlight-down: #d9eaff;
+  --highlight-both: #f0e6d6;
+  --highlight-selected: #ffd24d;
+
+  --numpad-bg: #ffffff;
+  --numpad-text: #111111;
+  --numpad-border: #cfcfcf;
+  --numpad-clear: #c62828;
+
+  --error-bg: #ffeeee;
+  --error-text: #c62828;
+
+  --check-correct-bg: #c8e6c9;
+  --check-correct-text: #1b5e20;
+  --check-wrong-bg: #ffcdd2;
+  --check-wrong-text: #b71c1c;
+
+  --win-color: #ffd54f;
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --text: #f5f5f5;
+
+    --blank-bg: #2a2a2a;
+    --blank-text: #ffffff;
+    --blank-border: #3a3a3a;
+
+    --clue-bg: #0d0d0d;
+    --clue-text: #d8d8d8;
+    --clue-line: #6a6a6a;
+
+    --wall-bg: #050505;
+
+    --grid-border: #4a4a4a;
+
+    --highlight-across: #3d3520;
+    --highlight-down: #1f2c3d;
+    --highlight-both: #3a322a;
+    --highlight-selected: #b88a1f;
+
+    --numpad-bg: #1f1f1f;
+    --numpad-text: #f5f5f5;
+    --numpad-border: #3a3a3a;
+    --numpad-clear: #ff6b6b;
+
+    --error-bg: #4a1a1a;
+    --error-text: #ff9b9b;
+
+    --check-correct-bg: #1b3d1c;
+    --check-correct-text: #a5d6a7;
+    --check-wrong-bg: #4a1a1a;
+    --check-wrong-text: #ff9b9b;
+
+    --win-color: #d4a017;
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Page layout ------------------------------------------------------------- */
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--grid-border);
+  background: var(--bg);
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.topbar-btn {
+  padding: 8px 16px;
+  background: var(--numpad-bg);
+  color: var(--numpad-text);
+  border: 1px solid var(--numpad-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 36px;
+  transition: background 100ms;
+}
+
+.topbar-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--numpad-bg) 88%, var(--text));
+}
+
+#app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  gap: 20px;
+}
+
+#timer {
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.win-time {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* Grid -------------------------------------------------------------------- */
+
+.grid {
+  --cell-size: 56px;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell-size));
+  grid-template-rows: repeat(var(--rows), var(--cell-size));
+  border: 2px solid var(--grid-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  position: relative;
+  border-right: 1px solid var(--grid-border);
+  border-bottom: 1px solid var(--grid-border);
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+/* Wall ------------------------------------------------------------------- */
+
+.cell-wall {
+  background: var(--wall-bg);
+}
+
+/* Clue ------------------------------------------------------------------- */
+
+.cell-clue {
+  background: var(--clue-bg);
+  color: var(--clue-text);
+}
+
+.clue-diag {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.clue-diag line {
+  stroke: var(--clue-line);
+  stroke-width: 1;
+}
+
+.clue-down,
+.clue-across {
+  position: absolute;
+  font-size: clamp(10px, calc(var(--cell-size) * 0.22), 13px);
+  line-height: 1;
+  font-weight: 500;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.clue-down {
+  top: 4px;
+  left: 5px;
+}
+
+.clue-across {
+  bottom: 4px;
+  right: 5px;
+}
+
+/* Blank ------------------------------------------------------------------ */
+
+.cell-blank {
+  background: var(--blank-bg);
+  color: var(--blank-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* Background fades smoothly between selection / highlight / error states.
+     Run-highlights set `--highlight-delay` inline (in input.js) so cells
+     closer to the selected one fade in first. */
+  transition: background-color 150ms ease, box-shadow 150ms ease, color 150ms ease;
+}
+
+.cell-blank.highlight-across,
+.cell-blank.highlight-down {
+  transition-delay: var(--highlight-delay, 0ms);
+}
+
+.cell-blank:hover {
+  background: color-mix(in srgb, var(--blank-bg) 88%, var(--text));
+}
+
+.cell-value {
+  font-size: clamp(20px, calc(var(--cell-size) * 0.45), 26px);
+  font-weight: 700;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  animation: cell-value-pop 150ms ease-out;
+}
+
+@keyframes cell-value-pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0.3;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Selection / run highlights -------------------------------------------- */
+
+.cell-blank.highlight-across {
+  background: var(--highlight-across);
+}
+
+.cell-blank.highlight-down {
+  background: var(--highlight-down);
+}
+
+.cell-blank.highlight-across.highlight-down {
+  background: var(--highlight-both);
+}
+
+.cell-blank.selected {
+  background: var(--highlight-selected);
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--text) 70%, var(--highlight-selected));
+  outline: 2px dashed color-mix(in srgb, var(--text) 50%, transparent);
+  outline-offset: -4px;
+}
+
+/* Hide the focus ring when keyboard focus moves into the grid container.
+   Selection itself provides the visible "focused cell" affordance. */
+#grid-container:focus {
+  outline: none;
+}
+
+/* Error state — red bg/text. Source order keeps the bg visible even when
+   the cell is also .selected (selection's box-shadow still draws on top).
+   The wavy underline is a non-color cue per WCAG so colorblind players
+   still see "this digit is wrong". */
+.cell-blank.error {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.cell-blank.error .cell-value {
+  text-decoration: underline wavy;
+  text-decoration-color: var(--error-text);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+.cell-blank.error-shake {
+  animation:
+    cell-shake 240ms ease-in-out 1,
+    cell-error-pulse 240ms ease-in-out 1;
+}
+
+@keyframes cell-shake {
+  0%   { transform: translateX(0); }
+  33%  { transform: translateX(-3px); }
+  66%  { transform: translateX(3px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes cell-error-pulse {
+  0%, 100% { background: var(--error-bg); }
+  50%      { background: color-mix(in srgb, var(--error-bg) 60%, var(--error-text)); }
+}
+
+/* Numpad ---------------------------------------------------------------- */
+
+.numpad {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+.numpad-btn {
+  flex: 1 1 44px;
+  min-width: 44px;
+  min-height: 48px;
+  background: var(--numpad-bg);
+  color: var(--numpad-text);
+  border: 1px solid var(--numpad-border);
+  border-radius: 8px;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  transition: background 100ms, transform 80ms, box-shadow 120ms;
+  position: relative;
+  overflow: hidden;
+}
+
+.numpad-btn:hover:not(:disabled) {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+.numpad-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--numpad-bg) 88%, var(--text));
+}
+
+.numpad-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.numpad-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Tap ripple — JS adds .ripple-on briefly via the click handler. */
+.numpad-btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, currentColor 35%, transparent) 0%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.numpad-btn.ripple-on::after {
+  animation: numpad-ripple 400ms ease-out;
+}
+
+@keyframes numpad-ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+.numpad-clear {
+  color: var(--numpad-clear);
+}
+
+/* Toolbar (Check / Reveal) --------------------------------------------- */
+
+#toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.toolbar-btn {
+  padding: 10px 18px;
+  background: var(--numpad-bg);
+  color: var(--numpad-text);
+  border: 1px solid var(--numpad-border);
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  min-height: 44px;
+  transition: background 100ms;
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--numpad-bg) 88%, var(--text));
+}
+
+.toolbar-btn[aria-pressed="true"] {
+  background: var(--highlight-selected);
+  color: #111;
+  border-color: color-mix(in srgb, var(--highlight-selected) 70%, var(--text));
+}
+
+#btn-notes .pencil-icon {
+  margin-right: 4px;
+  display: inline-block;
+  transition: transform 200ms ease;
+}
+
+#btn-notes[aria-pressed="true"] .pencil-icon {
+  transform: rotate(-15deg);
+}
+
+/* Pencil marks ---------------------------------------------------------- */
+
+.cell-pencil {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  padding: 2px;
+}
+
+.pencil-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(8px, calc(var(--cell-size) * 0.2), 11px);
+  font-weight: 500;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  line-height: 1;
+}
+
+/* Check / Reveal animations ------------------------------------------- */
+
+@keyframes flash-correct {
+  0%, 100% { background: var(--blank-bg); }
+  20%, 80% { background: var(--check-correct-bg); color: var(--check-correct-text); }
+}
+
+@keyframes flash-wrong {
+  0%, 100% { background: var(--blank-bg); }
+  20%, 80% { background: var(--check-wrong-bg); color: var(--check-wrong-text); }
+}
+
+.cell-blank.flash-correct {
+  animation: flash-correct 1000ms ease-in-out;
+}
+
+.cell-blank.flash-wrong {
+  animation: flash-wrong 1000ms ease-in-out;
+}
+
+/* Win celebration ----------------------------------------------------- */
+
+.grid-stage {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  /* Large grids on narrow screens scroll horizontally inside the stage
+     instead of overflowing the page. */
+  overflow: auto;
+}
+
+@keyframes win-glow {
+  0% {
+    background: var(--blank-bg);
+    transform: translateY(0) scale(1);
+    box-shadow: none;
+  }
+  40% {
+    background: var(--win-color);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--win-color) 60%, transparent);
+  }
+  100% {
+    background: var(--win-color);
+    transform: translateY(0) scale(1);
+    box-shadow: none;
+  }
+}
+
+.cell-blank.win-glow {
+  animation: win-glow 700ms ease-out var(--win-delay, 0ms) forwards;
+}
+
+#win-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: overlay-fade 400ms ease forwards;
+}
+
+#win-overlay[hidden] {
+  display: none;
+}
+
+@keyframes overlay-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.win-content {
+  background: var(--bg);
+  color: var(--text);
+  padding: 24px 32px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: win-content-pop 400ms ease-out;
+}
+
+@keyframes win-content-pop {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Confetti — 20 particles spawned in JS, animated upward then removed.
+   Fixed-positioned over the whole viewport so they have room to drift. */
+.confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 1000;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 16px;
+  /* Spawn from middle-vertical of the viewport (roughly where the overlay
+     sits) and fly upward. */
+  top: 60vh;
+  border-radius: 2px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+  animation: confetti-fly 1800ms ease-out forwards;
+}
+
+@keyframes confetti-fly {
+  0% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(-1 * var(--rise, 60vh))) rotate(var(--spin, 540deg));
+    opacity: 0;
+  }
+}
+
+.win-content h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: var(--win-color);
+  color: #111;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+/* New Game modal ------------------------------------------------------- */
+
+#newgame-modal {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+  animation: overlay-fade 200ms ease forwards;
+}
+
+#newgame-modal[hidden] {
+  display: none;
+}
+
+.modal-content {
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 24px;
+  max-width: 520px;
+  width: 100%;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  animation: modal-scale-in 200ms ease-out;
+}
+
+@keyframes modal-scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.modal-close {
+  font-size: 28px;
+  line-height: 1;
+  padding: 4px 10px;
+  color: var(--text);
+  border-radius: 6px;
+}
+
+.modal-close:hover {
+  background: color-mix(in srgb, var(--bg) 85%, var(--text));
+}
+
+.modal-section {
+  margin-bottom: 20px;
+}
+
+.modal-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.quick-play-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.quick-play-btn {
+  padding: 12px 16px;
+  background: var(--numpad-bg);
+  color: var(--numpad-text);
+  border: 1px solid var(--numpad-border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 100ms, transform 80ms;
+}
+
+.quick-play-btn:hover {
+  background: color-mix(in srgb, var(--numpad-bg) 88%, var(--text));
+}
+
+.quick-play-btn:active {
+  transform: scale(0.98);
+}
+
+.quick-play-btn .puzzle-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.quick-play-btn .puzzle-difficulty {
+  font-size: 11px;
+  opacity: 0.65;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.custom-inputs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+
+.custom-inputs label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.custom-inputs input[type="number"] {
+  margin-top: 4px;
+  padding: 8px;
+  width: 80px;
+  background: var(--blank-bg);
+  color: var(--blank-text);
+  border: 1px solid var(--grid-border);
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.custom-error {
+  margin-top: 8px;
+  color: var(--error-text);
+  font-size: 13px;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: color-mix(in srgb, var(--bg) 80%, var(--text) 20%);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.loading[hidden] {
+  display: none;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--grid-border);
+  border-top-color: var(--highlight-selected);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive ----------------------------------------------------------- */
+
+@media (max-width: 480px) {
+  #topbar {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .app-title {
+    font-size: 18px;
+  }
+  #timer {
+    font-size: 16px;
+  }
+  .topbar-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    min-height: 32px;
+  }
+  #app {
+    padding: 16px 8px;
+    gap: 14px;
+  }
+  .numpad-btn {
+    min-height: 44px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+  .toolbar-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    min-height: 40px;
+  }
+}
+
+/* Reduced motion ------------------------------------------------------- */
+
+/* When the user has asked for reduced motion, cap every animation/transition
+   to ~150ms so the UI feels snappy but isn't jarringly motion-heavy. The
+   spec allows up to 200ms; we round down for a calm default. JS hooks that
+   listen for `animationend` keep firing because the animation still runs. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 150ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 150ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Confetti is purely decorative — disable entirely. */
+  .confetti-container {
+    display: none !important;
+  }
+}
