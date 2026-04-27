@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space Defender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand__dot" aria-hidden="true"></div>
+          <div class="brand__text">
+            <div class="brand__title">Space Defender</div>
+            <div class="brand__sub">HTML • CSS • JS (canvas)</div>
+          </div>
+        </div>
+
+        <div class="topbar__right">
+          <button
+            type="button"
+            class="sound-toggle"
+            id="soundToggle"
+            aria-pressed="false"
+            aria-label="Silenciar sonido"
+            title="Sonido activado"
+          >
+            <span class="sound-toggle__ico" aria-hidden="true">🔊</span>
+          </button>
+          <div class="hud" aria-label="HUD">
+            <div class="hud__item">
+              <span class="hud__label">Puntaje</span>
+              <span class="hud__value" id="score">0</span>
+            </div>
+            <div class="hud__item">
+              <span class="hud__label">Vidas</span>
+              <span class="hud__value" id="lives">3</span>
+            </div>
+            <div class="hud__item">
+              <span class="hud__label">Nivel</span>
+              <span class="hud__value" id="level">1</span>
+            </div>
+            <div class="hud__item hud__item--buffs">
+              <span class="hud__label">Power-ups</span>
+              <span class="hud__value hud__value--small" id="buffs">—</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="stage" aria-label="Juego">
+        <canvas id="game" width="720" height="960" aria-label="Canvas del juego"></canvas>
+
+        <div class="overlay" id="overlay" aria-live="polite">
+          <div class="panel">
+            <h1 class="panel__title" id="overlayTitle">Space Defender</h1>
+            <p class="panel__text" id="overlayText">
+              Flechas para moverte • Espacio para disparar • Enter para iniciar o reiniciar
+            </p>
+            <div class="panel__actions">
+              <button class="btn" id="startBtn" type="button">Iniciar</button>
+              <button class="btn btn--ghost" id="howBtn" type="button">Cómo jugar</button>
+            </div>
+            <div class="panel__hint" id="overlayHint">Tip: mantén el ritmo, apunta al centro.</div>
+          </div>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+      </section>
+
+      <footer class="footer">
+        <div class="keys">
+          <span class="key"><kbd>←</kbd><kbd>→</kbd> mover</span>
+          <span class="key"><kbd>Espacio</kbd> disparar</span>
+          <span class="key"><kbd>Enter</kbd> iniciar/reiniciar</span>
+        </div>
+      </footer>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
