@@ -1,0 +1,366 @@
+:root {
+  --bg: #f4ead7;
+  --panel: #fffaf0;
+  --ink: #202020;
+  --muted: #686052;
+  --line: #2b2b2b;
+  --accent: #0e7c7b;
+  --accent-dark: #095f5e;
+  --danger: #b23030;
+  --success: #1d7a3a;
+  --machine: #c45c24;
+  --shadow: 8px 8px 0 #202020;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, rgba(14, 124, 123, 0.18) 0 25%, transparent 25% 50%),
+    linear-gradient(45deg, rgba(196, 92, 36, 0.14) 0 20%, transparent 20% 55%),
+    var(--bg);
+  background-size: 72px 72px, 96px 96px, auto;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.game-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.game-panel {
+  width: min(100%, 720px);
+  padding: clamp(22px, 5vw, 42px);
+  border: 3px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.game-header {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--machine);
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.status-card {
+  min-height: 92px;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.status-card-level {
+  background: #fff2c7;
+}
+
+.status-card-time strong {
+  color: var(--danger);
+}
+
+.status-card-player strong,
+.status-card-level strong {
+  color: var(--accent-dark);
+}
+
+.status-card-machine strong {
+  color: var(--machine);
+}
+
+.status-card-level.level-up {
+  animation: levelPulse 520ms ease;
+}
+
+.status-label,
+.challenge-label,
+label {
+  color: var(--muted);
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.status-card strong {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.challenge-area {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding: 22px;
+  border: 3px solid var(--line);
+  border-radius: 8px;
+  background: #ecf6f1;
+  text-align: center;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.challenge-area.flash-correct {
+  background: #dff5e6;
+  transform: scale(1.01);
+}
+
+.challenge-area.flash-incorrect {
+  background: #f8dddd;
+  transform: scale(1.01);
+}
+
+.challenge-area.flash-level-up {
+  background: #fff2c7;
+  transform: scale(1.02);
+}
+
+@keyframes levelPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+
+  45% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 5px rgba(196, 92, 36, 0.2);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: none;
+  }
+}
+
+.challenge-label {
+  margin: 0;
+}
+
+.question {
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: clamp(2.8rem, 10vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.player-form {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.player-form.is-locked {
+  opacity: 0.72;
+}
+
+.answer-form {
+  display: grid;
+  gap: 10px;
+}
+
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+input {
+  width: 100%;
+  min-height: 56px;
+  padding: 0 16px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
+input:focus {
+  outline: 3px solid rgba(14, 124, 123, 0.28);
+  outline-offset: 2px;
+}
+
+#player-name {
+  text-transform: uppercase;
+}
+
+button {
+  min-height: 56px;
+  padding: 0 20px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #ffffff;
+  font-family: Verdana, Geneva, sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 140ms ease, background-color 140ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.feedback {
+  min-height: 30px;
+  margin: 18px 0 0;
+  padding: 10px 12px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.feedback.correct {
+  border-color: rgba(29, 122, 58, 0.35);
+  background: rgba(223, 245, 230, 0.72);
+  color: var(--success);
+}
+
+.feedback.win {
+  border-color: rgba(29, 122, 58, 0.5);
+  background: #dff5e6;
+  color: var(--success);
+}
+
+.feedback.incorrect,
+.feedback.finished {
+  border-color: rgba(178, 48, 48, 0.35);
+  background: rgba(248, 221, 221, 0.72);
+  color: var(--danger);
+}
+
+.feedback.loss {
+  border-color: rgba(178, 48, 48, 0.5);
+  background: #f8dddd;
+  color: var(--danger);
+}
+
+.feedback.tie {
+  border-color: rgba(196, 92, 36, 0.35);
+  background: rgba(255, 242, 199, 0.72);
+  color: var(--machine);
+}
+
+.feedback.draw {
+  border-color: rgba(196, 92, 36, 0.5);
+  background: #fff2c7;
+  color: var(--machine);
+}
+
+.leaderboard {
+  margin-top: 18px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.leaderboard h2 {
+  margin: 0 0 10px;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.leaderboard ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 24px;
+}
+
+.leaderboard li {
+  font-family: Verdana, Geneva, sans-serif;
+  font-weight: 700;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.secondary-button {
+  background: #ffffff;
+  color: var(--ink);
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: #f5ddba;
+}
+
+@media (max-width: 620px) {
+  .game-shell {
+    padding: 14px;
+  }
+
+  .game-panel {
+    box-shadow: 5px 5px 0 #202020;
+  }
+
+  .scoreboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .status-card {
+    min-height: 76px;
+  }
+
+  .answer-row {
+    grid-template-columns: 1fr;
+  }
+}
