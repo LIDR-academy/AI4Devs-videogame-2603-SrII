@@ -1,0 +1,120 @@
+/* === Reset & Base === */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0a0a12;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    color: #eee;
+}
+
+/* === Game container === */
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#gameCanvas {
+    display: block;
+    background: #0d0d1a;
+    border: 2px solid rgba(0, 255, 100, 0.25);
+    border-radius: 4px;
+}
+
+/* === HUD === */
+#hud {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 22px;
+    background: rgba(0, 0, 0, 0.65);
+    border: 1px solid rgba(0, 255, 100, 0.35);
+    border-radius: 20px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #39ff14;
+    text-shadow: 0 0 8px #39ff14, 0 0 20px #39ff14;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* === Overlay (start / game-over) === */
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 15, 0.88);
+    z-index: 20;
+    transition: opacity 0.4s ease;
+}
+
+#overlay.hidden {
+    display: none;
+}
+
+#overlay-title {
+    font-size: 2.6rem;
+    color: #39ff14;
+    text-shadow: 0 0 12px #39ff14, 0 0 40px #39ff14;
+    margin-bottom: 16px;
+}
+
+#overlay-message {
+    font-size: 1.05rem;
+    color: #ccc;
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+#start-btn {
+    padding: 12px 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #0a0a12;
+    background: #39ff14;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 14px #39ff14, 0 0 40px rgba(57, 255, 20, 0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+#start-btn:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 22px #39ff14, 0 0 60px rgba(57, 255, 20, 0.5);
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+    #hud {
+        font-size: 0.9rem;
+        padding: 4px 14px;
+    }
+    #overlay-title {
+        font-size: 1.8rem;
+    }
+    #overlay-message {
+        font-size: 0.9rem;
+    }
+    #start-btn {
+        padding: 10px 28px;
+        font-size: 1rem;
+    }
+}

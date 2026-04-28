@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cattle Guardian</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="hud">
+            <span id="score">Sheep Saved: 0</span>
+        </div>
+        <div id="overlay" class="hidden">
+            <h1 id="overlay-title">Cattle Guardian</h1>
+            <p id="overlay-message">Protect the sheep from wolves!<br>Arrow keys to move · Click to place obstacles</p>
+            <button id="start-btn">Start Game</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
