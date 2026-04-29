@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Challenge</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game-shell">
+    <section class="game-panel" aria-labelledby="game-title">
+      <header class="game-header">
+        <p class="eyebrow">Player vs Machine</p>
+        <h1 id="game-title">Math Challenge</h1>
+      </header>
+
+      <form id="player-form" class="player-form" autocomplete="off">
+        <label for="player-name">Player name</label>
+        <div class="answer-row">
+          <input
+            id="player-name"
+            type="text"
+            maxlength="3"
+            pattern="[A-Za-z0-9]{2,3}"
+            placeholder="YOU"
+          >
+          <button type="submit">Start</button>
+        </div>
+      </form>
+
+      <section class="scoreboard" aria-label="Game status">
+        <article class="status-card status-card-time">
+          <span class="status-label">Time</span>
+          <strong id="timer">45</strong>
+        </article>
+        <article class="status-card status-card-player">
+          <span class="status-label">Player</span>
+          <strong id="player-score">0</strong>
+        </article>
+        <article class="status-card status-card-level">
+          <span class="status-label">Level</span>
+          <strong id="level">1</strong>
+        </article>
+        <article class="status-card status-card-machine">
+          <span class="status-label">Machine</span>
+          <strong id="machine-score">0</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">Streak</span>
+          <strong id="streak">0</strong>
+        </article>
+        <article class="status-card">
+          <span class="status-label">Best</span>
+          <strong id="high-score">0</strong>
+        </article>
+      </section>
+
+      <section id="challenge-area" class="challenge-area" aria-live="polite">
+        <p class="challenge-label">Solve this operation</p>
+        <div id="question" class="question">0 + 0</div>
+      </section>
+
+      <form id="answer-form" class="answer-form" autocomplete="off">
+        <label for="answer-input">Your answer</label>
+        <div class="answer-row">
+          <input
+            id="answer-input"
+            type="number"
+            inputmode="numeric"
+            placeholder="Type answer"
+            required
+          >
+          <button id="submit-button" type="submit">Submit</button>
+        </div>
+      </form>
+
+      <p id="feedback" class="feedback" role="status">Enter an answer to begin scoring.</p>
+
+      <section class="leaderboard" aria-labelledby="leaderboard-title">
+        <h2 id="leaderboard-title">Top 3</h2>
+        <ol id="leaderboard-list">
+          <li>No scores yet</li>
+        </ol>
+      </section>
+
+      <footer class="controls">
+        <button id="restart-button" class="secondary-button" type="button">Restart</button>
+      </footer>
+    </section>
+  </main>
+
+  <script src="src/config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
