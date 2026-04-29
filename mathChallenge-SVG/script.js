@@ -59,7 +59,13 @@ function randomInt(min, max) {
 
 function loadHighScore() {
   try {
-    return Number(localStorage.getItem(HIGH_SCORE_KEY)) || HIGH_SCORE_FALLBACK;
+    const storedHighScore = Number(localStorage.getItem(HIGH_SCORE_KEY));
+
+    if (!Number.isFinite(storedHighScore) || storedHighScore < 0) {
+      return HIGH_SCORE_FALLBACK;
+    }
+
+    return Math.floor(storedHighScore);
   } catch {
     return HIGH_SCORE_FALLBACK;
   }
