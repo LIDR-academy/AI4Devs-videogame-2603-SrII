@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THREES! - Brutalist Edition</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">THREES!</h1>
+            <div class="controls">
+                <div class="score-box">
+                    <span class="label">SCORE</span>
+                    <span id="current-score" class="value">0</span>
+                </div>
+                <div class="board-selector">
+                    <select id="size-selector">
+                        <option value="3">3x3</option>
+                        <option value="4" selected>4x4</option>
+                        <option value="5">5x5</option>
+                        <option value="6">6x6</option>
+                    </select>
+                </div>
+                <button id="reset-btn" class="btn">RESTART</button>
+                <button id="ranking-btn" class="btn">RANKING</button>
+            </div>
+        </header>
+
+        <main id="game-container">
+            <div id="board" class="board"></div>
+        </main>
+
+        <!-- Modals for Ranking and Game Over -->
+        <div id="modal-overlay" class="hidden">
+            <div id="ranking-modal" class="modal hidden">
+                <h2>TOP 10 RANKING</h2>
+                <table id="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>SCORE</th>
+                            <th>NAME</th>
+                            <th>DATE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-body"></tbody>
+                </table>
+                <button id="close-ranking" class="btn">CLOSE</button>
+            </div>
+
+            <div id="game-over-modal" class="modal hidden">
+                <h2>GAME OVER</h2>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <div id="new-record-input" class="hidden">
+                    <p>NEW RECORD! Enter your name (max 5 chars):</p>
+                    <input type="text" id="player-name" maxlength="5" placeholder="NAME">
+                    <button id="save-score" class="btn">SAVE</button>
+                </div>
+                <button id="restart-after-gameover" class="btn">PLAY AGAIN</button>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
