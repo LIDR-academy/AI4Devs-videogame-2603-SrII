@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rapunzel’s Tower — Rescue climb</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hud">
+        <span id="floorHud">Floor: 1 / 100</span>
+        <span id="coinHud" class="coin-hud">Coins: 0 / 20</span>
+        <span id="diffHud" class="diff-hud-label">—</span>
+        <span id="stateHud">Reach the princess</span>
+      </header>
+      <div class="game-wrap">
+        <div
+          id="difficultyPick"
+          class="difficulty-screen"
+          role="dialog"
+          aria-labelledby="diffPickTitle"
+          aria-modal="true"
+        >
+          <h2 id="diffPickTitle">Choose difficulty</h2>
+          <p class="difficulty-desc">
+            After you touch a landing, it holds for a few seconds, then falls. Pick how long you have.
+          </p>
+          <div class="difficulty-btns">
+            <button type="button" class="diff-btn diff-btn-easy" data-ms="5000" data-label="Easy">
+              Easy — 5s
+            </button>
+            <button type="button" class="diff-btn diff-btn-medium" data-ms="3000" data-label="Medium">
+              Medium — 3s
+            </button>
+            <button type="button" class="diff-btn diff-btn-hard" data-ms="1000" data-label="Hard">
+              Hard — 1s
+            </button>
+          </div>
+        </div>
+        <canvas id="game" width="480" height="640" aria-label="Knight climbing the tower to rescue Rapunzel"></canvas>
+      </div>
+      <p class="hint">
+        Arrows or A/D · Space jumps · 20–25 coins in the tower — need 20 at the top to escape · Crumble time
+        depends on difficulty (see buttons above)
+      </p>
+      <button type="button" id="restart" hidden>Play again</button>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
