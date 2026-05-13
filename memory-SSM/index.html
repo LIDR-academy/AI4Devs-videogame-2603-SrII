@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory — Encuentra las Parejas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="container">
+    <header>
+      <h1 class="title">MEMORIA</h1>
+      <p class="subtitle">Encuentra todas las parejas</p>
+    </header>
+
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-label">INTENTOS</span>
+        <span class="stat-value" id="moves">0</span>
+      </div>
+      <button class="btn-restart" id="restartBtn">↺ REINICIAR</button>
+      <div class="stat">
+        <span class="stat-label">TIEMPO</span>
+        <span class="stat-value" id="timer">00:00</span>
+      </div>
+    </div>
+
+    <div class="board" id="board"></div>
+  </div>
+
+  <!-- Modal de victoria -->
+  <div class="modal-overlay" id="winModal">
+    <div class="modal">
+      <div class="trophy">🏆</div>
+      <h2 class="modal-title">¡Felicidades!</h2>
+      <p class="modal-text">Completaste el juego en</p>
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <span class="modal-stat-value" id="finalMoves">0</span>
+          <span class="modal-stat-label">intentos</span>
+        </div>
+        <div class="modal-stat">
+          <span class="modal-stat-value" id="finalTime">00:00</span>
+          <span class="modal-stat-label">tiempo</span>
+        </div>
+      </div>
+      <button class="btn-play-again" id="playAgainBtn">JUGAR DE NUEVO</button>
+    </div>
+  </div>
+
+  <div class="confetti-container" id="confetti"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
